@@ -1,0 +1,107 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const topicBoxes = document.querySelectorAll('.topic-box');
+    const bookViewer = document.getElementById('book-viewer');
+    const pageContainer = document.getElementById('page-container');
+    const prevPageBtn = document.getElementById('prev-page');
+    const nextPageBtn = document.getElementById('next-page');
+    const pageNumberDisplay = document.getElementById('page-number');
+
+    // Define page images for each topic. Replace with your image URLs.
+    const topicPages = {
+        'scientific-study': [
+            'page1-study.jpg', // Replace with your image URLs
+            'page2-study.jpg',
+            'page3-study.jpg'
+        ],
+        'classification-animal': [
+            'page1-animal.jpg', // Replace with your image URLs
+            'page2-animal.jpg'
+        ]
+    };
+
+    let currentPageIndex = 0;
+    let currentTopic = null;
+    let pages = []; // Array to hold image elements
+
+    function loadPages(topic) {
+        pageContainer.innerHTML = ''; // Clear any existing pages
+        pages = topicPages[topic].map(imageUrl => {
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            return img;
+        });
+        pages.forEach(page => pageContainer.appendChild(page)); // Add images to page container
+    }
+
+    function showPage(index) {
+        pages.forEach(page => page.classList.remove('active')); // Hide all pages
+        if (pages[index]) {
+            pages[index].classList.add('active'); // Show the current page
+        }
+        updatePageNumber();
+    }
+
+    function updatePageNumber() {
+        pageNumberDisplay.textContent = `${currentPageIndex + 1}/${pages.length}`;
+    }
+
+    function openBookViewer(topic) {
+        currentTopic = topic;
+        loadPages(topic); // Load pages for the selected topic
+        currentPageIndex = 0; // Start at the first page
+        showPage(currentPageIndex); // Display the first page
+        bookViewer.style.display = 'flex'; // Show the book viewer
+    }
+
+    function closeBookViewer() {
+        bookViewer.style.display = 'none'; // Hide the book viewer
+    }
+
+
+    topicBoxes.forEach(box => {
+        box.addEventListener('click', () => {
+            const topic = box.dataset.topic;
+            openBookViewer(topic);
+        });
+    });
+
+    prevPageBtn.addEventListener('click', () => {
+        if (currentPageIndex > 0) {
+            currentPageIndex--;
+            showPage(currentPageIndex);
+        }
+    });
+
+    nextPageBtn.addEventListener('click', () => {
+        if (currentPageIndex < pages.length - 1) {
+            currentPageIndex++;
+            showPage(currentPageIndex);
+        }
+    });
+
+    // Swipe functionality (basic horizontal swipe)
+    let touchStartX = 0;
+    pageContainer.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+    });
+
+    pageContainer.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].clientX;
+        const swipeDistance = touchEndX - touchStartX;
+
+        if (swipeDistance > 50) { // Right swipe (previous page)
+            if (currentPageIndex > 0) {
+                currentPageIndex--;
+                showPage(currentPageIndex);
+            }
+        } else if (swipeDistance < -50) { // Left swipe (next page)
+            if (currentPageIndex < pages.length - 1) {
+                currentPageIndex++;
+                showPage(currentPageIndex);
+            }
+        }
+    });
+
+    // Initially hide all pages and show first page when viewer opens - handled in showPage function
+
+});
