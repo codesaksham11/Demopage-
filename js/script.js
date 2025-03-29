@@ -27,25 +27,35 @@ document.addEventListener('DOMContentLoaded', () => {
     // Swipe functionality (mobile only)
     let touchStartX = 0;
     let touchStartY = 0;
-    let touchEndX = 0;
-    let touchEndY = 0;
+    let touchMoveX = 0;
+    let touchMoveY = 0;
 
     document.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
         touchStartY = e.changedTouches[0].screenY;
     });
 
-    document.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        touchEndY = e.changedTouches[0].screenY;
-        handleSwipe();
+    document.addEventListener('touchmove', (e) => {
+        touchMoveX = e.changedTouches[0].screenX;
+        touchMoveY = e.changedTouches[0].screenY;
+
+        const dx = touchMoveX - touchStartX;
+        const dy = touchMoveY - touchStartY;
+
+        // Vertical scrolling
+        if (Math.abs(dy) > Math.abs(dx)) {
+            e.preventDefault(); // Prevent pull-to-refresh or other defaults
+            window.scrollBy({ top: -dy / 2, behavior: 'auto' }); // Smooth scrolling based on finger movement
+        }
     });
 
-    function handleSwipe() {
+    document.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].screenX;
+        const touchEndY = e.changedTouches[0].screenY;
         const dx = touchEndX - touchStartX;
         const dy = touchEndY - touchStartY;
 
-        // Horizontal swipe (left/right)
+        // Horizontal swipe (left/right) for page navigation
         if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
             if (dx < 0 && currentPage < totalPages - 1) {
                 currentPage++;
@@ -55,11 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 updatePage();
             }
         }
-        // Vertical swipe (down)
-        else if (dy > 50) {
-            window.scrollBy({ top: 300, behavior: 'smooth' }); // Scrolls down 300px
-        }
-    }
+    });
 
     function updatePage() {
         pages.forEach((page, index) => {
