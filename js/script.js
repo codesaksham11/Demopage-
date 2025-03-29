@@ -26,25 +26,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Swipe functionality (mobile only)
     let touchStartX = 0;
+    let touchStartY = 0;
     let touchEndX = 0;
+    let touchEndY = 0;
 
     document.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
     });
 
     document.addEventListener('touchend', (e) => {
         touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
         handleSwipe();
     });
 
     function handleSwipe() {
-        if (touchEndX < touchStartX - 50 && currentPage < totalPages - 1) {
-            currentPage++;
-            updatePage();
+        const dx = touchEndX - touchStartX;
+        const dy = touchEndY - touchStartY;
+
+        // Horizontal swipe (left/right)
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+            if (dx < 0 && currentPage < totalPages - 1) {
+                currentPage++;
+                updatePage();
+            } else if (dx > 0 && currentPage > 0) {
+                currentPage--;
+                updatePage();
+            }
         }
-        if (touchEndX > touchStartX + 50 && currentPage > 0) {
-            currentPage--;
-            updatePage();
+        // Vertical swipe (down)
+        else if (dy > 50) {
+            window.scrollBy({ top: 300, behavior: 'smooth' }); // Scrolls down 300px
         }
     }
 
