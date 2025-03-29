@@ -6,10 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentPage = 0;
     const totalPages = pages.length;
 
-    // Initial setup
     updatePage();
 
-    // Navigation buttons
     prevBtn.addEventListener('click', () => {
         if (currentPage > 0) {
             currentPage--;
@@ -24,30 +22,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Swipe functionality (mobile only)
     let touchStartX = 0;
     let touchStartY = 0;
-    let touchMoveX = 0;
-    let touchMoveY = 0;
 
     document.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
         touchStartY = e.changedTouches[0].screenY;
     });
 
-    document.addEventListener('touchmove', (e) => {
-        touchMoveX = e.changedTouches[0].screenX;
-        touchMoveY = e.changedTouches[0].screenY;
-
-        const dx = touchMoveX - touchStartX;
-        const dy = touchMoveY - touchStartY;
-
-        // Vertical scrolling
-        if (Math.abs(dy) > Math.abs(dx)) {
-            e.preventDefault(); // Prevent pull-to-refresh or other defaults
-            window.scrollBy({ top: -dy / 2, behavior: 'auto' }); // Smooth scrolling based on finger movement
-        }
-    });
+    // Note: The problematic 'touchmove' listener that interfered with
+    // vertical scrolling has been removed. Native scrolling is now used.
 
     document.addEventListener('touchend', (e) => {
         const touchEndX = e.changedTouches[0].screenX;
@@ -55,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const dx = touchEndX - touchStartX;
         const dy = touchEndY - touchStartY;
 
-        // Horizontal swipe (left/right) for page navigation
+        // Horizontal swipe detection
         if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
             if (dx < 0 && currentPage < totalPages - 1) {
                 currentPage++;
@@ -65,6 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 updatePage();
             }
         }
+
+        // Reset values
+        touchStartX = 0;
+        touchStartY = 0;
     });
 
     function updatePage() {
@@ -74,5 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
         pageIndicator.textContent = `${currentPage + 1}-${totalPages}`;
         prevBtn.disabled = currentPage === 0;
         nextBtn.disabled = currentPage === totalPages - 1;
+        window.scrollTo(0, 0); // Scroll to top on page change
     }
 });
