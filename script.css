@@ -9,13 +9,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Define page images for each topic. Replace with your image URLs.
     const topicPages = {
         'scientific-study': [
-            'page1-study.jpg', // Replace with your image URLs
-            'page2-study.jpg',
-            'page3-study.jpg'
+            'image/IMG_20250328_215121.jpg', // Replace with your image URLs
+            'image/IMG_20250328_213128.jpg',
+            'image/IMG_20250328_213106.jpg'
         ],
         'classification-animal': [
-            'page1-animal.jpg', // Replace with your image URLs
-            'page2-animal.jpg'
+            'image/IMG_20250328_213000.jpg', // Replace with your image URLs
+            'image/IMG_20250328_213044.jpg'
         ]
     };
 
